@@ -1,3 +1,23 @@
+## Work to be done
+
+Short Term Goals:
+- Factor in the amount of money the user has (on buying and selling)
+- Add selling option to not sell all (create a modal)
+- Improve error 404 page
+- fix x-axis on stock chart (display date)
+- change purchase struture to allow for same stock to be purchased more then once
+- Add logout button
+- Forget Password
+- User settings (change email) (should reg include name? probably)
+- Add current price into show stocks (along with gains/losses)
+- Add comments
+
+Long Term goals:
+- Add functionality for purchase requests
+- Improve overall look (theme and such)
+- Improve home page (pie chart of stocks and line graph showing historic performance)
+
+_________________________________________________________________________________________________________________________
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
