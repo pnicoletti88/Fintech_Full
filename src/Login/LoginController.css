@@ -1,0 +1,12 @@
+.jumbotron{
+  height: 100vh;
+  margin-bottom:0;
+}
+
+.d-flex justify-content-center{
+  width: 50%;
+}
+
+.btn-space {
+  margin-top: 5px;
+}
