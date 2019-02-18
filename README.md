@@ -4,13 +4,14 @@ Short Term Goals:
 - Factor in the amount of money the user has (on buying and selling)
 - Add selling option to not sell all (create a modal)
 - Improve error 404 page
-- fix x-axis on stock chart (display date)
-- change purchase struture to allow for same stock to be purchased more then once
+- Fix x-axis on stock chart (display date)
+- Change purchase struture to allow for same stock to be purchased more then once
 - Add logout button
 - Forget Password
 - User settings (change email) (should reg include name? probably)
 - Add current price into show stocks (along with gains/losses)
 - Add comments
+- Update Buy Modal to have number only type of input
 
 Long Term goals:
 - Add functionality for purchase requests
