@@ -5,6 +5,7 @@ import * as _fetch from 'isomorphic-fetch'
 import Charts from "./Chart";
 import Popup from "reactjs-popup";
 import BuyModal from "./BuyModal.js";
+import ControlledPopup from "./ControlledPopup.js"
 
 
 const iex = new IEXClient(_fetch);
@@ -18,12 +19,14 @@ class Buy extends Component{
         this.state = {
             StockInfo: null,
             Status: null,
-            Ticker: null
+            Ticker: null,
+            confirmed: false
         };
     }
 
     StockIn(event, ticker) {
         event.preventDefault();
+        this.setState({confirmed: false});
         let StockName = null, Price = null;
 
         iex.stockQuote(ticker, false).then((item) => {
@@ -77,23 +80,23 @@ class Buy extends Component{
             Price:price,
             Shares:num
         }).catch((error)=>{alert(error.message)});
-
+        this.setState({confirmed: true});
     }
 
 
     render(){
-
+        let popUp = null;
+            if (this.state.confirmed === false) {
+                popUp = (
+                    <ControlledPopup name={"Buy Stock"} content={<span> <BuyModal stock={this.state.StockInfo}
+                                                                                  confirm={this.purchase}/> </span>}/>
+                );
+            }
         let stockData = "";
         if (this.state.StockInfo !== null) {
             stockData = (
                 <div style={{ "textAlign": "center" }}>
-                    <Popup
-                        trigger={<button className="button"> Buy Stock </button>}
-                        modal
-                        closeOnDocumentClick
-                    >
-                        <span> <BuyModal stock = {this.state.StockInfo} confirm = {this.purchase}/> </span>
-                    </Popup>
+                    {popUp}
                     <div class="d-flex justify-content-center">
                         <div className="p-2 bd-highlight">
                             <b>Name: </b>{this.state.StockInfo.companyName}
