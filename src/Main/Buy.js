@@ -1,58 +1,140 @@
 import React, { Component } from 'react';
 import {database} from "../firebase";
+import { IEXClient } from 'iex-api'
+import * as _fetch from 'isomorphic-fetch'
+import Charts from "./Chart";
+import Popup from "reactjs-popup";
+import BuyModal from "./BuyModal.js";
+
+
+const iex = new IEXClient(_fetch);
+
+
 
 class Buy extends Component{
     constructor(props){
         super(props);
+        this.purchase = this.purchase.bind(this);
+        this.state = {
+            StockInfo: null,
+            Status: null,
+            Ticker: null
+        };
+    }
+
+    StockIn(event, ticker) {
+        event.preventDefault();
+        let StockName = null, Price = null;
+
+        iex.stockQuote(ticker, false).then((item) => {
+                if (item === "Unknown symbol") {
+                    this.setState({
+                            Status: "Ticker Not Found",
+                            StockInfo:null,
+                            Ticker: null
+                        }
+                    );
+                } else {
+                    let price = item.latestPrice;
+                    let name = item.companyName;
+
+                    this.setState({
+                        StockInfo: item,
+                        Status: null,
+                        Ticker: ticker
+                    });
+                }
+
+            }
+        );
 
     }
 
+    todaysDate(){
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth()+1; //January is 0!
+        let yyyy = today.getFullYear();
 
-    purchase(e,name,price,num,date){
-        e.preventDefault();
-        alert(this.props.UID);
+        if(dd<10) {
+            dd = '0'+dd
+        }
+
+        if(mm<10) {
+            mm = '0'+mm
+        }
+
+        return mm + '/' + dd + '/' + yyyy;
+    }
+
+    purchase(num,item){
+        let name = item.symbol;
+        let date = this.todaysDate();
+        let price = item.latestPrice;
         let StockListRef = database.ref("Users/"+this.props.UID+"/Stocks");
-        //let newStock = StockListRef.push({Name:name});
         StockListRef.child(name).set({
             Date:date,
             Price:price,
             Shares:num
-        }).catch((error)=>{alert(error.message)})
+        }).catch((error)=>{alert(error.message)});
 
     }
 
 
     render(){
 
+        let stockData = "";
+        if (this.state.StockInfo !== null) {
+            stockData = (
+                <div style={{ "textAlign": "center" }}>
+                    <Popup
+                        trigger={<button className="button"> Buy Stock </button>}
+                        modal
+                        closeOnDocumentClick
+                    >
+                        <span> <BuyModal stock = {this.state.StockInfo} confirm = {this.purchase}/> </span>
+                    </Popup>
+                    <div class="d-flex justify-content-center">
+                        <div className="p-2 bd-highlight">
+                            <b>Name: </b>{this.state.StockInfo.companyName}
+                            <br/>
+                            <b>Sector: </b>{this.state.StockInfo.sector}
+                        </div>
+                        <div className="p-2 bd-highlight">
+                            <b>Price: </b>{this.state.StockInfo.latestPrice}
+                            <br/>
+                            <b>Market Capacity:</b> {this.state.StockInfo.marketCap}
+                        </div>
+                        <div className="p-2 bd-highlight">
+                            <b>52 Week Range:</b> {this.state.StockInfo.week52Low + " - " + this.state.StockInfo.week52High}
+                            <br/>
+                            <b>Price/Earnings Ratio: </b>{this.state.StockInfo.peRatio}
+                        </div>
+                        <div className="p-2 bd-highlight">
+                            <b>% Day Change: </b>{this.state.StockInfo.changePercent}%
+                            <br/>
+                            <b>Average Volume:</b> {this.state.StockInfo.avgTotalVolume}
+                        </div>
+                    </div>
+                    <div>
+                        <Charts ticker={this.state.Ticker}/>
+                    </div>
+                </div>
+
+            );
+        }
 
         return(
-            <div>
-                <form onSubmit={(e, name = document.getElementById("Name").value ,
-                                 price = document.getElementById("Date").value,
-                                 num =document.getElementById("Price").value ,
-                                 date = document.getElementById("Num").value)=> {this.purchase(e,name,price,num,date)}}>
-                    <div className="form-group">
-                        <label>Name:</label>
-                        <input className="form-control" type="text"id="Name"
-                               placeholder="Enter email"/>
-                    </div>
-                    <div className="form-group">
-                        <label>Date:</label>
-                        <input className="form-control" type="text" id="Date"
-                               placeholder="Enter email"/>
-                    </div>
-                    <div className="form-group">
-                        <label>Price:</label>
-                        <input className="form-control" type="text" id="Price"
-                               placeholder="Enter email"/>
-                    </div>
-                    <div className="form-group">
-                        <label>Number of Shares:</label>
-                        <input className="form-control" type="text" id="Num"
-                               placeholder="Enter email"/>
-                    </div>
-                    <input type="submit" className="btn btn-secondary btn-space" value="Submit"/>
+            <div style={{ "textAlign": "center" }}>
+                <form onSubmit={(e, input = document.getElementById("TickerBox").value) => { this.StockIn(e, input) }}>
+                    <label>
+                        Enter the Ticker of A Stock: &nbsp;
+                        <input type="text" id="TickerBox" />
+                    </label>
+                    <input type="submit" value="Submit" />
                 </form>
+                {stockData}
+                {this.state.Status}
             </div>
         );
     }
