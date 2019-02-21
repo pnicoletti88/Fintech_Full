@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import firebase, { auth, provider, database, db } from '../firebase.js';
+import ControlledPopup from "./ControlledPopup";
+import SellModal from "./SellModal.js"
 
 class Sell extends Component{
     constructor(props){
@@ -15,7 +17,7 @@ class Sell extends Component{
             json = snapshot.toJSON();
             for (let key in json){
                 if (key !== "NullStock") {
-                    let tempObj = {Name: "", Date: "", Price: "", Shares: ""};
+                    let tempObj = {Name: "", Value: "", Shares: ""};
                     tempObj.Name = key;
                     for (let key2 in json[key]) {
                         tempObj[key2] = json[key][key2];
@@ -24,8 +26,6 @@ class Sell extends Component{
                     list.push(tempObj)
                 }
             }
-
-            //this.setState({stocks:list});
             this.formatTable(list);
         });
 
@@ -38,8 +38,7 @@ class Sell extends Component{
                 <thead className="thead-dark">
                 <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Purchase Price</th>
+                    <th scope="col">Average Purchase Price</th>
                     <th scope="col">Number of Shares</th>
                     <th scope="col">Sell</th>
                 </tr>
@@ -49,14 +48,10 @@ class Sell extends Component{
                 ;
                 rows.push((<tr>
                         <th scope="row">{data[x].Name}</th>
-                        <td>{data[x].Date}</td>
-                        <td>{data[x].Price}</td>
+                        <td>{data[x].Value/data[x].Shares}</td>
                         <td>{data[x].Shares}</td>
                         <td>
-                            <button onClick={() => {
-                                this.Sold(data[x].Name)
-                            }}>Sell
-                            </button>
+                            <ControlledPopup name={"Sell"} content={<SellModal UID = {this.props.UID} stock={data[x].Name}/>}/>
                         </td>
                     </tr>
                 ));

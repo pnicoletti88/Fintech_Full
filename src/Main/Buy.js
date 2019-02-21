@@ -24,11 +24,13 @@ class Buy extends Component{
         };
     }
 
+    //this function handle the API call to IEX to get the data
     StockIn(event, ticker) {
         event.preventDefault();
         this.setState({confirmed: false});
         let StockName = null, Price = null;
 
+        //note item is an object with all the stock data
         iex.stockQuote(ticker, false).then((item) => {
                 if (item === "Unknown symbol") {
                     this.setState({
@@ -38,9 +40,6 @@ class Buy extends Component{
                         }
                     );
                 } else {
-                    let price = item.latestPrice;
-                    let name = item.companyName;
-
                     this.setState({
                         StockInfo: item,
                         Status: null,
@@ -70,16 +69,44 @@ class Buy extends Component{
         return mm + '/' + dd + '/' + yyyy;
     }
 
-    purchase(num,item){
+    purchase(num,item,totalSpend){
         let name = item.symbol;
         let date = this.todaysDate();
         let price = item.latestPrice;
         let StockListRef = database.ref("Users/"+this.props.UID+"/Stocks");
-        StockListRef.child(name).set({
-            Date:date,
-            Price:price,
-            Shares:num
-        }).catch((error)=>{alert(error.message)});
+        let TransactionRef = database.ref("Users/"+this.props.UID+"/Transactions/Buy");
+
+        //add stock to portfolio
+        database.ref("Users/"+this.props.UID+"/Stocks/"+name).once("value",(snapshot) =>{
+            let val = 0;
+            let number = 0;
+            if (snapshot.exists()) {
+                let json = snapshot.toJSON();
+                val = json["Value"];
+                number = json["Shares"];
+            }
+            StockListRef.child(name).set({
+                Value:(price*num + val),
+                Shares:(parseInt(num) + number)
+            }).catch((error)=>{alert(error.message)});
+        });
+
+
+        //add purchase to transactions
+        let TransName = name + "-" + (new Date()).getTime();
+        TransactionRef.child(TransName).set({
+            Date: date,
+            Price: price,
+            Shares: parseInt(num)
+        });
+
+        //Update amount of cash - notice once here very important for only single call
+        database.ref("Users/"+this.props.UID+"/Money").once('value').then((snapshot) => {
+            let newAmount = snapshot.val() - totalSpend;
+            database.ref("Users/"+this.props.UID).update({Money:newAmount});
+        });
+
+        //makes the modal get unmounted
         this.setState({confirmed: true});
     }
 

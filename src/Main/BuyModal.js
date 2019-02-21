@@ -24,7 +24,7 @@ class BuyModal extends Component{
     }
 
     TradeConfirmed(){
-        this.props.confirm(this.state.numShares,this.props.stock);
+        this.props.confirm(this.state.numShares,this.props.stock, this.state.purchasePrice);
     }
 
     render(){

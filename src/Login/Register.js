@@ -11,18 +11,30 @@ class Register extends React.Component {
             loginStatus: updateVal
         });
     }
-    submit(e, user, pass, pass2) {
+    submit(e, user, pass, pass2, Name) {
         e.preventDefault();
+        let outName = Name.toString();
         if (pass === pass2) {
             auth.createUserWithEmailAndPassword(user, pass).then((User) => {
                     this.setState({ loginStatus: "Register Successful" });
                     database.ref("Users").child(User.user.uid).set({
-                        Money: 100
+                        Money: 100000,
+                        Name: Name
                     });
                     database.ref("Users").child(User.user.uid).child("Stocks").child("NullStock").set({
-                        Date: 0,
+                        Value: 0,
+                        Shares: 0
+                    });
+                    database.ref("Users").child(User.user.uid).child("Transactions").child("Buy").child("NullStock-0").set({
+                        Date: "00/00/00",
                         Price: 0,
                         Shares: 0
+                    });
+                    database.ref("Users").child(User.user.uid).child("Transactions").child("Sell").child("NullStock-0").set({
+                        BuyPrice: 0,
+                        Date: "00/00/00",
+                        Shares: 0,
+                        SellPrice: 0
                     });
                     this.props.login();
                 }
@@ -41,7 +53,15 @@ class Register extends React.Component {
             <div>
                 <h1>Register</h1>
                 {this.state.loginStatus}
-                <form onSubmit={(e, user = document.getElementById("RegUsername").value, pass = document.getElementById("RegPassword").value, pass2 = document.getElementById("RegPassword2").value) => { this.submit(e, user, pass,pass2) }}>
+                <form onSubmit={(e, user = document.getElementById("RegUsername").value,
+                                 pass = document.getElementById("RegPassword").value,
+                                 pass2 = document.getElementById("RegPassword2").value,
+                                 name = document.getElementById("Name").value) => { this.submit(e, user, pass,pass2,name) }}>
+
+                    <div className="form-group">
+                        <label>Name:</label>
+                        <input className="form-control" type="text" id="Name" placeholder="Enter name"/>
+                    </div>
                     <div className="form-group">
                         <label>Username:</label>
                         <input class="form-control" type="text" name="RegUsername" id="RegUsername" placeholder="Enter email"/>

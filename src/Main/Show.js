@@ -14,7 +14,7 @@ class Show extends Component{
 
             json = snapshot.toJSON();
             for (let key in json){
-                let tempObj = { Name: "", Date: "", Price: "", Shares: "" };
+                let tempObj = { Name: "", Value: "", Shares: "" };
                 if (key !== "NullStock") {
                     tempObj.Name = key;
                     for (let key2 in json[key]) {
@@ -25,7 +25,6 @@ class Show extends Component{
                 }
             }
 
-            //this.setState({stocks:list});
             this.formatTable(list);
         });
 
@@ -38,8 +37,7 @@ class Show extends Component{
                 <thead className="thead-dark">
                 <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Purchase Price</th>
+                    <th scope="col">Average Purchase Price</th>
                     <th scope="col">Number of Shares</th>
                 </tr>
                 </thead>);
@@ -48,8 +46,7 @@ class Show extends Component{
                 ;
                 rows.push((<tr>
                         <th scope="row">{data[x].Name}</th>
-                        <td>{data[x].Date}</td>
-                        <td>{data[x].Price}</td>
+                        <td>{data[x].Value/data[x].Shares}</td>
                         <td>{data[x].Shares}</td>
                     </tr>
                 ));
