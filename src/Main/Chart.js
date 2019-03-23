@@ -35,7 +35,7 @@ class Charts extends Component {
 
     getChartData(){
         let data = [];
-        iex.stockChart(this.props.ticker,"1m").then((item) => {
+        iex.stockChart(this.props.ticker,"6m").then((item) => {
                 if (item === "Unknown symbol") {
                     this.setState({
                             Data: null,
@@ -68,8 +68,8 @@ class Charts extends Component {
                 data={this.state.Data}
                 options={{
                     title: {title: 'bitchass'},
-                    hAxis: {type: 'date', title: 'Date'},
-                    vAxis: {title: 'Price', minValue: 0, maxValue:(this.state.MaxInt*1.25)},
+                    hAxis: {type: 'date', title: 'Past 6 Months'},
+                    vAxis: {title: 'Price (USD)', minValue: 0, maxValue:(this.state.MaxInt*1.25)},
                     intervals: {style: 'sticks'},
                     legend: 'none',
                     chartArea: {width: '80%', height: '85%'},

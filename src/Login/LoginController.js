@@ -55,7 +55,7 @@ class LoginController extends React.Component {
         return (
             <div className="jumbotron vertical-center">
                 <div className="container">
-                    <div className={"p-3 mb-2 bg-primary text-white"}>
+                    <div style={{"background-color":"#4F2683"}} className={"p-3 mb-2 text-white"} >
                         <div style={{ "textAlign": "center" }}>
                             {this.state.display}
                             {this.state.button}

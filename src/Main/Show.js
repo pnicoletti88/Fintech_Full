@@ -20,7 +20,7 @@ class Show extends Component{
                     for (let key2 in json[key]) {
                         tempObj[key2] = json[key][key2];
                     }
-
+                    tempObj.Value = Math.round(tempObj.Value * 100)/100;
                     list.push(tempObj)
                 }
             }
@@ -46,7 +46,7 @@ class Show extends Component{
                 ;
                 rows.push((<tr>
                         <th scope="row">{data[x].Name}</th>
-                        <td>{data[x].Value/data[x].Shares}</td>
+                        <td>{Math.round(data[x].Value/data[x].Shares * 100)/100}</td>
                         <td>{data[x].Shares}</td>
                     </tr>
                 ));

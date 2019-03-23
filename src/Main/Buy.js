@@ -115,8 +115,11 @@ class Buy extends Component{
         let popUp = null;
             if (this.state.confirmed === false) {
                 popUp = (
-                    <ControlledPopup name={"Buy Stock"} content={<span> <BuyModal stock={this.state.StockInfo}
-                                                                                  confirm={this.purchase}/> </span>}/>
+                    <ControlledPopup name={"Buy Stock"} content={
+                        <span>
+                            <BuyModal userCash={this.props.userCash} stock={this.state.StockInfo} confirm={this.purchase}/>
+                        </span>
+                    }/>
                 );
             }
         let stockData = "";
@@ -131,7 +134,7 @@ class Buy extends Component{
                             <b>Sector: </b>{this.state.StockInfo.sector}
                         </div>
                         <div className="p-2 bd-highlight">
-                            <b>Price: </b>{this.state.StockInfo.latestPrice}
+                            <b>Price: </b>{this.state.StockInfo.latestPrice} USD
                             <br/>
                             <b>Market Capacity:</b> {this.state.StockInfo.marketCap}
                         </div>
@@ -155,7 +158,7 @@ class Buy extends Component{
         }
 
         return(
-            <div style={{ "textAlign": "center" }}>
+            <div style={{ "textAlign": "center"}}>
                 <form onSubmit={(e, input = document.getElementById("TickerBox").value) => { this.StockIn(e, input) }}>
                     <label>
                         Enter the Ticker of A Stock: &nbsp;

@@ -22,7 +22,6 @@ class Sell extends Component{
                     for (let key2 in json[key]) {
                         tempObj[key2] = json[key][key2];
                     }
-
                     list.push(tempObj)
                 }
             }
@@ -48,7 +47,7 @@ class Sell extends Component{
                 ;
                 rows.push((<tr>
                         <th scope="row">{data[x].Name}</th>
-                        <td>{data[x].Value/data[x].Shares}</td>
+                        <td>{Math.round(data[x].Value/data[x].Shares * 100)/100}</td>
                         <td>{data[x].Shares}</td>
                         <td>
                             <ControlledPopup name={"Sell"} content={<SellModal UID = {this.props.UID} stock={data[x].Name}/>}/>

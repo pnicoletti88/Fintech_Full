@@ -122,10 +122,11 @@ class SellModal extends Component {
                 </div>
             );
         } else if (this.state.status === "set") {
-            let val = this.state.NumSell * this.state.Price;
+            let val = Math.round(this.state.NumSell * this.state.Price * 100)/100;
             out = (
                 <div>
                     Are you sure that you would like to sell {this.state.NumSell} shares for ${val}?
+                    <br/><br/>
                     <button onClick={()=> this.ProcessSale()}> Confirm </button>
                 </div>
             );
@@ -139,8 +140,8 @@ class SellModal extends Component {
 
 
         return (
-            <div>
-                Sell Stock
+            <div style={{"text-align":"center"}}>
+                <h3>Sell Stock</h3>
                 {out}
             </div>
         );
